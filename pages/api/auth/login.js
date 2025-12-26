@@ -8,8 +8,13 @@ const { rand, error, success, midd } = lib
 const admin_password  = process.env.ADMIN_PASSWORD
 const _password       = '098'
 
+export default async function handler(req, res) {
+  await midd(req, res)
+  
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Método no permitido' })
+  }
 
-const Login = async (req, res) => {
   let { dni, password, office_id } = req.body
   console.log({ dni, password, office_id })
 
@@ -32,9 +37,4 @@ const Login = async (req, res) => {
 
   // response
   return res.json(success({ session }))
-}
-
-export default async (req, res) => { 
-  await midd(req, res)
-  return Login(req, res) 
 }
