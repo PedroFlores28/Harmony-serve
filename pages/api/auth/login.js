@@ -35,17 +35,18 @@ const Login = async (req, res) => {
 }
 
 export default async (req, res) => {
-  await midd(req, res)
-  
-  // Manejar preflight request
+  // Manejar preflight request primero
   if (req.method === 'OPTIONS') {
+    await midd(req, res)
     return res.status(200).end()
   }
   
   // Solo permitir POST
   if (req.method !== 'POST') {
+    await midd(req, res)
     return res.status(405).json({ error: 'Método no permitido' })
   }
   
+  await midd(req, res)
   return Login(req, res)
 }
