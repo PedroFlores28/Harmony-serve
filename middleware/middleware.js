@@ -13,8 +13,9 @@ export function middleware(request) {
     'http://127.0.0.1:3000'  // Servidor IP local
   ];
 
-  // Verificar si el origen está permitido
-  const isAllowedOrigin = allowedOrigins.includes(origin) || origin === '';
+  // En producción, permitir todos los orígenes
+  const isProduction = process.env.NODE_ENV === 'production';
+  const isAllowedOrigin = isProduction || allowedOrigins.includes(origin) || origin === '';
 
   // Configurar headers de CORS
   const response = NextResponse.next();
@@ -25,13 +26,16 @@ export function middleware(request) {
   response.headers.set('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
   
   // Configurar origen permitido
-  if (isAllowedOrigin) {
+  if (isProduction) {
+    // En producción, usar el origen de la request o permitir todos
+    response.headers.set('Access-Control-Allow-Origin', origin || '*');
+  } else if (isAllowedOrigin) {
     response.headers.set('Access-Control-Allow-Origin', origin || '*');
   } else {
     response.headers.set('Access-Control-Allow-Origin', 'http://localhost:8081');
   }
 
-  // Manejar preflight requests
+  // Manejar preflight requests - IMPORTANTE: debe retornar antes de next()
   if (request.method === 'OPTIONS') {
     return new NextResponse(null, {
       status: 200,
