@@ -3,34 +3,54 @@ const Cors = require("cors");
 class Lib {
   constructor() {
     // Configurar orígenes permitidos según el entorno
-    const allowedOrigins = process.env.NODE_ENV === 'production' 
-      ? true // Permitir todos en producción
-      : [
-          'http://localhost:8080',
-          'http://localhost:8081',
-          'http://localhost:3000',
-          'http://127.0.0.1:8080',
-          'http://127.0.0.1:8081',
-          'http://127.0.0.1:3000',
-        ];
+    // En producción, permitir todos los orígenes dinámicamente
+    const corsOptions = process.env.NODE_ENV === 'production' 
+      ? {
+          origin: (origin, callback) => {
+            // En producción, permitir cualquier origen
+            callback(null, true);
+          },
+          credentials: true,
+          methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+          allowedHeaders: [
+            "Content-Type", 
+            "Authorization",
+            "X-CSRF-Token", 
+            "X-Requested-With", 
+            "Accept", 
+            "Accept-Version", 
+            "Content-Length", 
+            "Content-MD5", 
+            "Date", 
+            "X-Api-Version"
+          ],
+        }
+      : {
+          origin: [
+            'http://localhost:8080',
+            'http://localhost:8081',
+            'http://localhost:3000',
+            'http://127.0.0.1:8080',
+            'http://127.0.0.1:8081',
+            'http://127.0.0.1:3000',
+          ],
+          credentials: true,
+          methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+          allowedHeaders: [
+            "Content-Type", 
+            "Authorization",
+            "X-CSRF-Token", 
+            "X-Requested-With", 
+            "Accept", 
+            "Accept-Version", 
+            "Content-Length", 
+            "Content-MD5", 
+            "Date", 
+            "X-Api-Version"
+          ],
+        };
 
-    this.cors = Cors({
-      origin: allowedOrigins,
-      credentials: true,
-      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-      allowedHeaders: [
-        "Content-Type", 
-        "Authorization",
-        "X-CSRF-Token", 
-        "X-Requested-With", 
-        "Accept", 
-        "Accept-Version", 
-        "Content-Length", 
-        "Content-MD5", 
-        "Date", 
-        "X-Api-Version"
-      ],
-    });
+    this.cors = Cors(corsOptions);
 
     this.midd = this.midd.bind(this);
   }
