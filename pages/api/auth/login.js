@@ -10,7 +10,6 @@ const _password       = '098'
 
 
 const Login = async (req, res) => {
-
   let { dni, password, office_id } = req.body
   console.log({ dni, password, office_id })
 
@@ -35,4 +34,18 @@ const Login = async (req, res) => {
   return res.json(success({ session }))
 }
 
-export default async (req, res) => { await midd(req, res); return Login(req, res) }
+export default async (req, res) => {
+  await midd(req, res)
+  
+  // Manejar preflight request
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
+  }
+  
+  // Solo permitir POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Método no permitido' })
+  }
+  
+  return Login(req, res)
+}
