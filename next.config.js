@@ -2,12 +2,7 @@
 const nextConfig = {
   // Configuración para Heroku
   env: {
-    PORT: process.env.PORT || 3000,
-  },
-  
-  // Configuración del servidor
-  serverRuntimeConfig: {
-    port: process.env.PORT || 3000,
+    PORT: process.env.PORT || '3000',
   },
   
   async headers() {

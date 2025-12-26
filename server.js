@@ -9,7 +9,7 @@ const hostname = config.host;
 const port = config.port;
 
 // Preparar la aplicación Next.js
-const app = next({ dev, hostname, port });
+const app = next({ dev });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
