@@ -108,7 +108,12 @@ export default async (req, res) => {
       const { _id, id: paymentMethodId, ...paymentMethodData } = paymentMethod
 
       const updatedPaymentMethod = {
-        ...paymentMethodData,
+        cuenta: paymentMethod.cuenta,
+        cci: paymentMethod.cci || "",
+        titular: paymentMethod.titular,
+        banco: paymentMethod.banco,
+        tipo: paymentMethod.tipo,
+        active: paymentMethod.active !== undefined ? paymentMethod.active : true,
         updatedAt: new Date()
       }
 
