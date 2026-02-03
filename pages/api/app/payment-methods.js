@@ -23,7 +23,7 @@ export default async (req, res) => {
         id: method.id,
         name: method.banco,
         account: method.cuenta,
-        cci: method.cci || "",
+        cci: method.cci || method.CCI || "",
         holder: method.titular,
         type: method.tipo,
         active: method.active
