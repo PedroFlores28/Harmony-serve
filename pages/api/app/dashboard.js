@@ -5,6 +5,54 @@ const { User, Session, Transaction, Tree, Banner, Plan, DashboardConfig } = db
 const { error, success, acum, midd,model } = lib
 
 const D = ['id', 'name', 'lastName', 'affiliated', 'activated', 'tree', 'email', 'phone', 'address', 'rank', 'points', 'parentId', 'total_points']
+
+const RANK_POSITIONS = {
+  none: 0,
+  active: 1,
+  star: 2,
+  master: 3,
+  silver: 4,
+  gold: 5,
+  sapphire: 6,
+  RUBI: 7,
+  MILLONARIO: 8,
+  ORO: 9,
+  ESMERALDA: 10,
+  PLATINO: 11,
+  DIAMANTE: 12,
+  DIAMANTE_AZUL: 13,
+  DIAMANTE_EJECUTIVO: 14,
+  DOBLE_DIAMANTE: 15,
+  'DOBLE DIAMANTE': 15,
+  'TRIPLE DIAMANTE': 16,
+  DIAMANTE_CORONA: 17,
+  'DIAMANTE ESTRELLA': 17,
+  TOP_HARMONY: 18,
+}
+
+function rankPosition(rank) {
+  return RANK_POSITIONS[rank] !== undefined ? RANK_POSITIONS[rank] : -1
+}
+
+function calculateMaxRank(user) {
+  const candidates = [
+    user.maxRank,
+    user.max_rank,
+    user.maximumRank,
+    user.rank,
+  ].filter(Boolean)
+
+  if (Array.isArray(user.pays)) {
+    user.pays.forEach((pay) => {
+      if (pay && pay.payed && pay.name) candidates.push(pay.name)
+    })
+  }
+
+  return candidates.reduce((maxRank, rank) => {
+    return rankPosition(rank) > rankPosition(maxRank) ? rank : maxRank
+  }, 'none')
+}
+
 export default async (req, res) => {
   try {
     await midd(req, res)
@@ -104,6 +152,7 @@ export default async (req, res) => {
       balance: (ins - outs),
       _balance: (insVirtual - outsVirtual),
       rank:    user.rank,
+      maxRank: calculateMaxRank(user),
       points:  user.points,
       plans,
       total_points: user.total_points,
